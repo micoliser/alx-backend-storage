@@ -9,7 +9,7 @@ BEGIN
     DECLARE nb_projects INT DEFAULT 0;
 
     SELECT SUM(score) INTO total FROM corrections
-        WHERE correction.user_id = user_id;
+        WHERE corrections.user_id = user_id;
     SELECT COUNT(*) INTO nb_projects FROM corrections
         WHERE corrections.user_id = user_id;
 
