@@ -2,8 +2,7 @@
 """ This module logs some stats about a nginx collection """
 
 
-def log_stats():
-    """ show some log stats about a nginx collection """
+if __name__ == '__main__':
     from pymongo import MongoClient
 
     client = MongoClient()
@@ -19,7 +18,3 @@ def log_stats():
     count = db.nginx.count_documents({'method': 'GET', 'path': '/status'})
     print("{} status check".format(count))
     client.close()
-
-
-if __name__ == '__main__':
-    log_stats()
