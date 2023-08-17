@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """ This module contains a Cache class. """
 from functools import wraps
-from redis.client import Redis
 from typing import Union, Callable
 from uuid import uuid4
+import redis
 
 
 def count_calls(method: Callable) -> Callable:
@@ -35,13 +35,13 @@ def call_history(method: Callable) -> Callable:
 def replay(method: Callable) -> None:
     """ replay function to display history of calls to function """
 
-    redis = Redis()
+    r = redis.Redis()
     print("{} was called {} times:".format(method.__qualname__,
-                                           redis.get(method.__qualname__)
+                                           r.get(method.__qualname__)
                                            .decode('utf-8')))
 
-    inputs = redis.lrange(method.__qualname__ + ':inputs', 0, -1)
-    outputs = redis.lrange(method.__qualname__ + ':outputs', 0, -1)
+    inputs = r.lrange(method.__qualname__ + ':inputs', 0, -1)
+    outputs = r.lrange(method.__qualname__ + ':outputs', 0, -1)
 
     for input, output in zip(inputs, outputs):
         print("{}(*{}) -> {}".format(method.__qualname__,
@@ -55,7 +55,7 @@ class Cache:
     def __init__(self) -> None:
         """ Initialize class instance. """
 
-        self._redis = Redis()
+        self._redis = redis.Redis()
         self._redis.flushdb()
 
     @count_calls

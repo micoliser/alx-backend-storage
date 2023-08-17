@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
 """ implement a get page function """
 from functools import wraps
-from redis.client import Redis
 from typing import Callable
+import redis
 import requests
 
 
-r = Redis()
+r = redis.Redis()
 
 
 def count_requests(method: Callable) -> Callable:
     """ count requests decorator """
 
     @wraps(method)
-    def wrapper(url):
+    def wrapper(url: str) -> str:
         """ wrapper function """
 
-        r.incr("count:{}".format(url))
-        result = r.get(f'result:{url}')
+        r.incr('count:{}'.format(url))
+        result = r.get('result:{}'.format(url))
         if result:
             return result.decode('utf-8')
         result = method(url)
-        r.setex(f'result:{url}', 10, result)
+        r.set('count:{}'.format(url), result, 0)
+        r.setex('result:{}'.format(url), 10, result)
         return result
     return wrapper
 
