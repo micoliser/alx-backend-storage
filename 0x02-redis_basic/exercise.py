@@ -52,7 +52,7 @@ def replay(method: Callable) -> None:
 class Cache:
     """ Cache class. """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """ Initialize class instance. """
 
         self._redis = Redis()
